@@ -1,0 +1,65 @@
+* { font-family: Brush Script MT,cursive; }
+
+.hidden {display: none;}
+
+h2.header {
+  text-align: center;
+  margin-bottom: 1em;
+  border-bottom: none;
+  width: 92%;
+}
+
+#elm-main {
+  background: #fff;
+}
+
+.paints {
+  list-style: none;
+  margin: 0;
+
+  padding: 1em 1em 0.5em 1em; 
+  border: 1px solid #CCC;
+  border-radius: 5px;
+
+  zoom: 1;
+  overflow: auto;
+  display: inline-block;
+  background: azure;
+}
+
+.paint {
+  width: 220px;
+  height: 90px;
+  float: left;
+  margin: 0 0 2em 0.5em;
+  text-align: left;
+}
+
+
+.paint:before {
+  position: relative;
+  content: url(../images/paint-bucket.png); */
+}
+
+
+.available { background: white; }
+
+
+.rosybrown { background: rosybrown; }
+.darkorange { background: darkorange; }
+.gold { background: gold; }
+.indianred { background: indianred; }
+.greenyellow { background: greenyellow; }
+.lightskyblue { background: lightskyblue; }
+.salmon { background: salmon; }
+.magenta { background: magenta; }
+.orange { background: orange; }
+.tomato { background: tomato; }
+.khaki { background: khaki; }
+.mediumspringgreen { background: mediumspringgreen; }
+.teal { background: teal; }
+.maroon { background: maroon; }
+.cyan { background: cyan; }
+
+
+.paint:nth-child(2n+1) { clear: both}
