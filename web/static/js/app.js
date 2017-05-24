@@ -36,3 +36,9 @@ channel.on('deliver_paints', data => {
   console.log('received paints', data.paints)
   elmApp.ports.incomingPaints.send(data.paints)
 })
+
+
+// Subscribe to paint requests coming from Elm
+elmApp.ports.outgoingPaintRequests.subscribe(paint => {
+  console.log('outgoing paint request', paint)
+})

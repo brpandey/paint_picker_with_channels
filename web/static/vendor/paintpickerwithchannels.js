@@ -8260,29 +8260,29 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$PaintPickerWithChannels$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		if (_p0.ctor === 'Pick') {
-			var refreshPaint = function (paint) {
-				return _elm_lang$core$Native_Utils.eq(paint.cart, _p0._0.cart) ? _elm_lang$core$Native_Utils.update(
-					paint,
-					{picked: !paint.picked}) : paint;
-			};
-			return {
-				ctor: '_Tuple2',
-				_0: A2(_elm_lang$core$List$map, refreshPaint, model),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
-		}
-	});
 var _user$project$PaintPickerWithChannels$init = {
 	ctor: '_Tuple2',
 	_0: {ctor: '[]'},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
+var _user$project$PaintPickerWithChannels$outgoingPaintRequests = _elm_lang$core$Native_Platform.outgoingPort(
+	'outgoingPaintRequests',
+	function (v) {
+		return {cart: v.cart, color: v.color, sheen: v.sheen, picked: v.picked};
+	});
+var _user$project$PaintPickerWithChannels$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'Request') {
+			return {
+				ctor: '_Tuple2',
+				_0: model,
+				_1: _user$project$PaintPickerWithChannels$outgoingPaintRequests(_p0._0)
+			};
+		} else {
+			return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
 var _user$project$PaintPickerWithChannels$incomingPaints = _elm_lang$core$Native_Platform.incomingPort(
 	'incomingPaints',
 	_elm_lang$core$Json_Decode$list(
@@ -8318,8 +8318,8 @@ var _user$project$PaintPickerWithChannels$Incoming = function (a) {
 var _user$project$PaintPickerWithChannels$subscriptions = function (model) {
 	return _user$project$PaintPickerWithChannels$incomingPaints(_user$project$PaintPickerWithChannels$Incoming);
 };
-var _user$project$PaintPickerWithChannels$Pick = function (a) {
-	return {ctor: 'Pick', _0: a};
+var _user$project$PaintPickerWithChannels$Request = function (a) {
+	return {ctor: 'Request', _0: a};
 };
 var _user$project$PaintPickerWithChannels$paintSingle = function (paint) {
 	var pickedClass = paint.picked ? paint.color : 'available';
@@ -8332,7 +8332,7 @@ var _user$project$PaintPickerWithChannels$paintSingle = function (paint) {
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$html$Html_Events$onClick(
-					_user$project$PaintPickerWithChannels$Pick(paint)),
+					_user$project$PaintPickerWithChannels$Request(paint)),
 				_1: {ctor: '[]'}
 			}
 		},

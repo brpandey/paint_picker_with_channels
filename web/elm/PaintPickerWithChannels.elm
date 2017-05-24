@@ -47,24 +47,18 @@ init =
 
 
 type Msg
-    = Pick Paint
+    = Request Paint
     | Incoming Model
+
+
+port outgoingPaintRequests : Paint -> Cmd msg
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        Pick pickedPaint ->
-            -- if we pick it once, its picked, twice, not picked
-            let
-                refreshPaint paint =
-                    if paint.cart == pickedPaint.cart then
-                        { paint | picked = not paint.picked }
-                    else
-                        paint
-            in
-                -- apply to each model list paint
-                ( List.map refreshPaint model, Cmd.none )
+        Request paint ->
+            ( model, outgoingPaintRequests paint )
 
         Incoming paints ->
             ( paints, Cmd.none )
@@ -88,7 +82,7 @@ paintSingle paint =
             else
                 "available"
     in
-        li [ class ("paint " ++ pickedClass), onClick (Pick paint) ]
+        li [ class ("paint " ++ pickedClass), onClick (Request paint) ]
             [ text (toString paint.cart ++ " " ++ paint.color) ]
 
 
