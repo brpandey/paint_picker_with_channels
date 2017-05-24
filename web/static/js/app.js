@@ -31,7 +31,7 @@ channel.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
-// Receive phoenix channel event 'deliver_paints'
+// Receive phoenix channel event 'deliver_paints', notify Elm w/ a send!
 channel.on('deliver_paints', data => {
   console.log('received paints', data.paints)
   elmApp.ports.incomingPaints.send(data.paints)
@@ -40,5 +40,13 @@ channel.on('deliver_paints', data => {
 
 // Subscribe to paint requests coming from Elm
 elmApp.ports.outgoingPaintRequests.subscribe(paint => {
-  console.log('outgoing paint request', paint)
+  // push request to phoenix channel, handle error
+  channel.push("request_paint", paint)
+         .receive("error", payload => console.log(payload.message))
+})
+
+// Receive phoenix channel event 'paint_updated', notify Elm w/ a send!
+channel.on("paint_updated", paint => {
+  console.log('paint_updated', paint)
+  elmApp.ports.incomingPaintUpdates.send(paint)
 })

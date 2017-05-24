@@ -48,7 +48,12 @@ init =
 
 type Msg
     = Request Paint
+    | Pick Paint
     | Incoming Model
+
+
+
+-- Forward the outgoing paint requests to JS then the Websocket Channel
 
 
 port outgoingPaintRequests : Paint -> Cmd msg
@@ -59,6 +64,17 @@ update msg model =
     case msg of
         Request paint ->
             ( model, outgoingPaintRequests paint )
+
+        Pick pickedPaint ->
+            let
+                refreshPaint paint =
+                    if paint.cart == pickedPaint.cart then
+                        { paint | picked = pickedPaint.picked }
+                    else
+                        paint
+            in
+                -- apply to each model list paint
+                ( List.map refreshPaint model, Cmd.none )
 
         Incoming paints ->
             ( paints, Cmd.none )
@@ -88,19 +104,22 @@ paintSingle paint =
 
 
 -- SUBSCRIPTIONS
--- We create an incomingPaints port.
--- It is creating Sub (List Paint).
--- We are subscribing to lists of paint sent into Elm from JS.
--- When JS receives a deliver paint event from the phoenix channel,
--- it will send things on to Elm!
--- The port type is (List Paint -> msg) so we can convert that list of paint
--- to our Msg type immediately.
--- This allows us to send a list of paint from JS to Elm
+-- The incomingPaints port allows us to subscribe to lists of
+-- paint sent into Elm from JS on behalf of the Phoenix Channel
+-- The incomingPaintUpdates port allows us to subscribe to
+-- paint updates sent into Elm from JS on behalf of the Phoenix Channel
+-- NOTE: We use Sub.batch to handle both subscriptions properly
 
 
 port incomingPaints : (List Paint -> msg) -> Sub msg
 
 
+port incomingPaintUpdates : (Paint -> msg) -> Sub msg
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    incomingPaints Incoming
+    Sub.batch
+        [ incomingPaints Incoming
+        , incomingPaintUpdates Pick
+        ]

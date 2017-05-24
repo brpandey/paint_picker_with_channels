@@ -21,6 +21,29 @@ defmodule PaintPickerWithChannels.PaintChannel do
   end
 
 
+  # We handle the request_paint message (instead of previously locally within Elm)
+  # payload holds the paint data we sent and socket carries the current socket state
+  def handle_in("request_paint", payload, socket) do
+
+    # Retrieve current paint record
+    paint = Repo.get!(PaintPickerWithChannels.Paint, payload["cart"])
+
+    # Invert the previous picked selection
+    params = %{picked: !payload["picked"]} 
+
+    # Update the record, validating the change
+    changeset = PaintPickerWithChannels.Paint.changeset(paint, params)
+    
+    case Repo.update(changeset) do
+      {:ok, paint} ->
+        broadcast socket, "paint_updated", paint
+        {:noreply, socket}
+      {:error, _changeset} ->
+        {:reply, {:error, %{message: "Didn't work!"}}, socket}
+    end
+  end
+
+
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("ping", payload, socket) do

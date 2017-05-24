@@ -11,14 +11,27 @@ var _user$project$PaintPickerWithChannels$outgoingPaintRequests = _elm_lang$core
 var _user$project$PaintPickerWithChannels$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'Request') {
-			return {
-				ctor: '_Tuple2',
-				_0: model,
-				_1: _user$project$PaintPickerWithChannels$outgoingPaintRequests(_p0._0)
-			};
-		} else {
-			return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
+		switch (_p0.ctor) {
+			case 'Request':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$PaintPickerWithChannels$outgoingPaintRequests(_p0._0)
+				};
+			case 'Pick':
+				var _p1 = _p0._0;
+				var refreshPaint = function (paint) {
+					return _elm_lang$core$Native_Utils.eq(paint.cart, _p1.cart) ? _elm_lang$core$Native_Utils.update(
+						paint,
+						{picked: _p1.picked}) : paint;
+				};
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_elm_lang$core$List$map, refreshPaint, model),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$PaintPickerWithChannels$incomingPaints = _elm_lang$core$Native_Platform.incomingPort(
@@ -46,6 +59,30 @@ var _user$project$PaintPickerWithChannels$incomingPaints = _elm_lang$core$Native
 					A2(_elm_lang$core$Json_Decode$field, 'color', _elm_lang$core$Json_Decode$string));
 			},
 			A2(_elm_lang$core$Json_Decode$field, 'cart', _elm_lang$core$Json_Decode$int))));
+var _user$project$PaintPickerWithChannels$incomingPaintUpdates = _elm_lang$core$Native_Platform.incomingPort(
+	'incomingPaintUpdates',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (cart) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				function (color) {
+					return A2(
+						_elm_lang$core$Json_Decode$andThen,
+						function (sheen) {
+							return A2(
+								_elm_lang$core$Json_Decode$andThen,
+								function (picked) {
+									return _elm_lang$core$Json_Decode$succeed(
+										{cart: cart, color: color, sheen: sheen, picked: picked});
+								},
+								A2(_elm_lang$core$Json_Decode$field, 'picked', _elm_lang$core$Json_Decode$bool));
+						},
+						A2(_elm_lang$core$Json_Decode$field, 'sheen', _elm_lang$core$Json_Decode$string));
+				},
+				A2(_elm_lang$core$Json_Decode$field, 'color', _elm_lang$core$Json_Decode$string));
+		},
+		A2(_elm_lang$core$Json_Decode$field, 'cart', _elm_lang$core$Json_Decode$int)));
 var _user$project$PaintPickerWithChannels$Paint = F4(
 	function (a, b, c, d) {
 		return {cart: a, color: b, sheen: c, picked: d};
@@ -53,8 +90,20 @@ var _user$project$PaintPickerWithChannels$Paint = F4(
 var _user$project$PaintPickerWithChannels$Incoming = function (a) {
 	return {ctor: 'Incoming', _0: a};
 };
+var _user$project$PaintPickerWithChannels$Pick = function (a) {
+	return {ctor: 'Pick', _0: a};
+};
 var _user$project$PaintPickerWithChannels$subscriptions = function (model) {
-	return _user$project$PaintPickerWithChannels$incomingPaints(_user$project$PaintPickerWithChannels$Incoming);
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: _user$project$PaintPickerWithChannels$incomingPaints(_user$project$PaintPickerWithChannels$Incoming),
+			_1: {
+				ctor: '::',
+				_0: _user$project$PaintPickerWithChannels$incomingPaintUpdates(_user$project$PaintPickerWithChannels$Pick),
+				_1: {ctor: '[]'}
+			}
+		});
 };
 var _user$project$PaintPickerWithChannels$Request = function (a) {
 	return {ctor: 'Request', _0: a};
