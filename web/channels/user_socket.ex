@@ -3,6 +3,7 @@ defmodule PaintPickerWithChannels.UserSocket do
 
   ## Channels
   # channel "room:*", PaintPickerWithChannels.RoomChannel
+  channel "paint:lobby", PaintPickerWithChannels.PaintChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

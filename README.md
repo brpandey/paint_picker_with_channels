@@ -4,7 +4,9 @@
 
 ### Description
 Fun little web app that uses Elm and Phoenix to select paint cans (Phoenix db backend uses Postgres) 
-Instead of requesting JSON from an API endpoint we use Phoenix Channels and ports to communicate with JS and the Phoenix channel!!
+
+Instead of requesting JSON from an API endpoint we use web socket channels via Phoenix Channels 
+and also Elm ports to communicate with JS and the Phoenix channel!!
 
 
 

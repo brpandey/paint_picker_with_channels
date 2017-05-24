@@ -1,58 +1,61 @@
 var _user$project$PaintPickerWithChannels$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		var refreshPaint = function (paint) {
-			return _elm_lang$core$Native_Utils.eq(paint.cart, _p0._0.cart) ? _elm_lang$core$Native_Utils.update(
-				paint,
-				{picked: !paint.picked}) : paint;
-		};
-		return A2(_elm_lang$core$List$map, refreshPaint, model);
+		if (_p0.ctor === 'Pick') {
+			var refreshPaint = function (paint) {
+				return _elm_lang$core$Native_Utils.eq(paint.cart, _p0._0.cart) ? _elm_lang$core$Native_Utils.update(
+					paint,
+					{picked: !paint.picked}) : paint;
+			};
+			return {
+				ctor: '_Tuple2',
+				_0: A2(_elm_lang$core$List$map, refreshPaint, model),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
+		}
 	});
 var _user$project$PaintPickerWithChannels$init = {
-	ctor: '::',
-	_0: {cart: 1, color: 'salmon', sheen: 'gloss', picked: false},
-	_1: {
-		ctor: '::',
-		_0: {cart: 2, color: 'tomato', sheen: 'flat', picked: false},
-		_1: {
-			ctor: '::',
-			_0: {cart: 3, color: 'darkorange', sheen: 'satin', picked: false},
-			_1: {
-				ctor: '::',
-				_0: {cart: 4, color: 'indianred', sheen: 'gloss', picked: false},
-				_1: {
-					ctor: '::',
-					_0: {cart: 5, color: 'greenyellow', sheen: 'eggshell', picked: false},
-					_1: {
-						ctor: '::',
-						_0: {cart: 6, color: 'mediumspringgreen', sheen: 'eggshell', picked: false},
-						_1: {
-							ctor: '::',
-							_0: {cart: 7, color: 'khaki', sheen: 'flat', picked: false},
-							_1: {
-								ctor: '::',
-								_0: {cart: 8, color: 'gold', sheen: 'flat', picked: false},
-								_1: {
-									ctor: '::',
-									_0: {cart: 9, color: 'teal', sheen: 'semi-gloss', picked: false},
-									_1: {
-										ctor: '::',
-										_0: {cart: 10, color: 'maroon', sheen: 'semi-gloss', picked: false},
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	ctor: '_Tuple2',
+	_0: {ctor: '[]'},
+	_1: _elm_lang$core$Platform_Cmd$none
 };
+var _user$project$PaintPickerWithChannels$incomingPaints = _elm_lang$core$Native_Platform.incomingPort(
+	'incomingPaints',
+	_elm_lang$core$Json_Decode$list(
+		A2(
+			_elm_lang$core$Json_Decode$andThen,
+			function (cart) {
+				return A2(
+					_elm_lang$core$Json_Decode$andThen,
+					function (color) {
+						return A2(
+							_elm_lang$core$Json_Decode$andThen,
+							function (sheen) {
+								return A2(
+									_elm_lang$core$Json_Decode$andThen,
+									function (picked) {
+										return _elm_lang$core$Json_Decode$succeed(
+											{cart: cart, color: color, sheen: sheen, picked: picked});
+									},
+									A2(_elm_lang$core$Json_Decode$field, 'picked', _elm_lang$core$Json_Decode$bool));
+							},
+							A2(_elm_lang$core$Json_Decode$field, 'sheen', _elm_lang$core$Json_Decode$string));
+					},
+					A2(_elm_lang$core$Json_Decode$field, 'color', _elm_lang$core$Json_Decode$string));
+			},
+			A2(_elm_lang$core$Json_Decode$field, 'cart', _elm_lang$core$Json_Decode$int))));
 var _user$project$PaintPickerWithChannels$Paint = F4(
 	function (a, b, c, d) {
 		return {cart: a, color: b, sheen: c, picked: d};
 	});
+var _user$project$PaintPickerWithChannels$Incoming = function (a) {
+	return {ctor: 'Incoming', _0: a};
+};
+var _user$project$PaintPickerWithChannels$subscriptions = function (model) {
+	return _user$project$PaintPickerWithChannels$incomingPaints(_user$project$PaintPickerWithChannels$Incoming);
+};
 var _user$project$PaintPickerWithChannels$Pick = function (a) {
 	return {ctor: 'Pick', _0: a};
 };
@@ -91,5 +94,5 @@ var _user$project$PaintPickerWithChannels$view = function (model) {
 		},
 		A2(_elm_lang$core$List$map, _user$project$PaintPickerWithChannels$paintSingle, model));
 };
-var _user$project$PaintPickerWithChannels$main = _elm_lang$html$Html$beginnerProgram(
-	{model: _user$project$PaintPickerWithChannels$init, update: _user$project$PaintPickerWithChannels$update, view: _user$project$PaintPickerWithChannels$view})();
+var _user$project$PaintPickerWithChannels$main = _elm_lang$html$Html$program(
+	{init: _user$project$PaintPickerWithChannels$init, view: _user$project$PaintPickerWithChannels$view, update: _user$project$PaintPickerWithChannels$update, subscriptions: _user$project$PaintPickerWithChannels$subscriptions})();

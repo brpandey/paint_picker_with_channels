@@ -1,16 +1,16 @@
-module PaintPickerWithChannels exposing (..)
+port module PaintPickerWithChannels exposing (..)
 
 import Html exposing (Html, ul, li, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 
 
-main : Program Never Model Msg
 main =
-    Html.beginnerProgram
-        { model = init
-        , update = update
+    Html.program
+        { init = init
         , view = view
+        , update = update
+        , subscriptions = subscriptions
         }
 
 
@@ -37,19 +37,9 @@ type alias Model =
     List Paint
 
 
-init : Model
+init : ( Model, Cmd msg )
 init =
-    [ { cart = 1, color = "salmon", sheen = "gloss", picked = False }
-    , { cart = 2, color = "tomato", sheen = "flat", picked = False }
-    , { cart = 3, color = "darkorange", sheen = "satin", picked = False }
-    , { cart = 4, color = "indianred", sheen = "gloss", picked = False }
-    , { cart = 5, color = "greenyellow", sheen = "eggshell", picked = False }
-    , { cart = 6, color = "mediumspringgreen", sheen = "eggshell", picked = False }
-    , { cart = 7, color = "khaki", sheen = "flat", picked = False }
-    , { cart = 8, color = "gold", sheen = "flat", picked = False }
-    , { cart = 9, color = "teal", sheen = "semi-gloss", picked = False }
-    , { cart = 10, color = "maroon", sheen = "semi-gloss", picked = False }
-    ]
+    ( [], Cmd.none )
 
 
 
@@ -58,9 +48,10 @@ init =
 
 type Msg
     = Pick Paint
+    | Incoming Model
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
         Pick pickedPaint ->
@@ -73,7 +64,10 @@ update msg model =
                         paint
             in
                 -- apply to each model list paint
-                List.map refreshPaint model
+                ( List.map refreshPaint model, Cmd.none )
+
+        Incoming paints ->
+            ( paints, Cmd.none )
 
 
 
@@ -96,3 +90,23 @@ paintSingle paint =
     in
         li [ class ("paint " ++ pickedClass), onClick (Pick paint) ]
             [ text (toString paint.cart ++ " " ++ paint.color) ]
+
+
+
+-- SUBSCRIPTIONS
+-- We create an incomingPaints port.
+-- It is creating Sub (List Paint).
+-- We are subscribing to lists of paint sent into Elm from JS.
+-- When JS receives a deliver paint event from the phoenix channel,
+-- it will send things on to Elm!
+-- The port type is (List Paint -> msg) so we can convert that list of paint
+-- to our Msg type immediately.
+-- This allows us to send a list of paint from JS to Elm
+
+
+port incomingPaints : (List Paint -> msg) -> Sub msg
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    incomingPaints Incoming
