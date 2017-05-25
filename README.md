@@ -11,6 +11,8 @@ and also Elm ports to communicate with JS and the Phoenix channel
 Now our paint can selects are stored within the DB using web socket channels
 
 
+### Snippets
+
 Phoenix channels code snippet
 
 ```elixir
