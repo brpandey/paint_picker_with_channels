@@ -13,7 +13,7 @@ Now our paint can selects are stored within the DB using web socket channels
 
 ### Snippets
 
-Phoenix channels code snippet
+Phoenix channel code snippet
 
 ```elixir
 
@@ -84,7 +84,7 @@ JS code snippet
 ```
 
 
-Elm snippet code
+Elm code snippet
 
 ```haskell
         -- SUBSCRIPTIONS
